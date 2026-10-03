@@ -1,6 +1,6 @@
 {
   "name": "mcp-connector",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Turn your Next.js and Supabase app into a connector Claude and ChatGPT can sign in to, so users can ask about their own data. Read only first, every query as the user.",
   "author": {
     "name": "Godwin Danjuma",

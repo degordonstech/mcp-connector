@@ -11,7 +11,7 @@ This skill builds it on Next.js (App Router) with Supabase, the way it was built
 
 ## How it fits together
 
-1. The AI app calls `https://your-app.com/api/mcp` with no token and gets a **401**. Its `WWW-Authenticate` header points at your **protected resource metadata**.
+1. The AI app calls your app's `/api/mcp` endpoint with no token and gets a **401**. Its `WWW-Authenticate` header points at your **protected resource metadata**.
 2. That metadata names your **Supabase project** as the authorization server. The AI app reads Supabase's discovery document and **registers itself** (dynamic client registration).
 3. The user is sent to Supabase, which sends them to **your consent page**. If they are signed out, your login page brings them back to it.
 4. They tap Allow. Supabase returns them to the AI app with a code, which it swaps for tokens.
@@ -176,8 +176,8 @@ export const config = {
 
 ## Testing
 
-1. **Discovery:** `node ${CLAUDE_PLUGIN_ROOT}/scripts/check.mjs https://your-app.com/api/mcp` walks the 401, both metadata documents and dynamic registration the way a client does. With `--token <access token>` it also opens a session and lists the tools.
-2. **The full sign-in:** `npx @modelcontextprotocol/inspector`, pointed at the connector address.
+1. **Discovery:** `node ${CLAUDE_PLUGIN_ROOT}/scripts/check.mjs <connector address>` walks the 401, both metadata documents and dynamic registration the way a client does. It never handles a token.
+2. **The full sign-in and the tools:** `npx @modelcontextprotocol/inspector`, pointed at the connector address.
 3. **The real thing:** add the address as a custom connector in Claude or ChatGPT, sign in, and ask the questions users will ask.
 
 ## When it will not connect

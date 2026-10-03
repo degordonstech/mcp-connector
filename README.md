@@ -11,7 +11,7 @@ I built this for P2Proof, a profit tracker for crypto traders, and it took a lot
 - **Plans the tools** from your data model: read only first, answering the questions users really ask, and never exposing anyone but the user.
 - **Builds the connector:** a Streamable HTTP endpoint with `mcp-handler`, sign-in through the Supabase OAuth server with dynamic client registration, the protected resource metadata, a consent screen, and a settings section to see and revoke connected apps.
 - **Runs every query as the user**, so your existing row level security protects the connector exactly like your dashboard. No service role key in any tool, no tokens stored by you.
-- **Tests the deployed connector** the way Claude and ChatGPT meet it: the 401, both metadata documents, dynamic registration, and, with a token, the tool list.
+- **Tests the deployed connector** the way Claude and ChatGPT meet it: the 401, both metadata documents and dynamic registration. It never handles a token; the MCP Inspector covers sign-in and the tools.
 
 ## Install
 
@@ -31,7 +31,7 @@ The skill also switches on by itself when you say something like "I want users t
 The checker is one file with no dependencies. You can run it yourself:
 
 ```
-node scripts/check.mjs https://your-app.com/api/mcp
+node scripts/check.mjs https://<your-app>/api/mcp
 ```
 
 ## Requirements

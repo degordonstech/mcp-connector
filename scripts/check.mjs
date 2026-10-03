@@ -1,21 +1,18 @@
 #!/usr/bin/env node
 // Checks a deployed MCP connector the way Claude and ChatGPT will meet it.
 //
-//   node check.mjs https://your-app.com/api/mcp
-//   node check.mjs https://your-app.com/api/mcp --token <access token>
+//   node check.mjs https://<your-app>/api/mcp
 //
-// Without a token it walks the sign-in discovery: the 401, the protected
-// resource metadata, and the authorization server's metadata. With a token
-// (copy one from a signed-in session) it also opens a session and lists the
-// tools. It only reads. No dependencies: Node 18+.
+// It walks the sign-in discovery a client goes through: the 401, the
+// protected resource metadata, and the authorization server's metadata. It
+// never takes or sends a token, and it only reads. To sign in and try the
+// tools, use the MCP Inspector. No dependencies: Node 18+.
 
 const args = process.argv.slice(2);
 const target = args.find((a) => /^https?:\/\//.test(a));
-const ti = args.indexOf('--token');
-const token = ti >= 0 ? args[ti + 1] : process.env.MCP_TOKEN;
 
 if (!target) {
-  console.error('Usage: node check.mjs https://your-app.com/api/mcp [--token <access token>]');
+  console.error('Usage: node check.mjs https://<your-app>/api/mcp');
   process.exit(1);
 }
 
@@ -138,40 +135,9 @@ for (const issuer of authServers) {
   }
 }
 
-// ── 4. with a token: open a session and list the tools ─────────────────────
+// ── 4. next step ───────────────────────────────────────────────────────────
 
-if (token) {
-  console.log('\n4. Signed in');
-  const auth = { ...mcpHeaders, Authorization: `Bearer ${token}` };
-  try {
-    const init = await fetch(target, { method: 'POST', headers: auth, body: JSON.stringify(initialize) });
-    const initBody = rpcResult(await init.text());
-    if (init.status !== 200 || !initBody?.result) {
-      fail(`initialize answered ${init.status}${initBody?.error ? `: ${initBody.error.message}` : ''}. An expired token also does this.`);
-    } else {
-      const info = initBody.result.serverInfo || {};
-      ok(`session opened with ${info.name || 'the server'} ${info.version || ''}`.trim());
-      if (!initBody.result.instructions) warn('no server instructions. A few sentences on what the data means and its limits help the model answer correctly.');
-      const session = init.headers.get('mcp-session-id');
-      const listHeaders = { ...auth, ...(session ? { 'mcp-session-id': session } : {}), 'mcp-protocol-version': initBody.result.protocolVersion || '2025-06-18' };
-      await fetch(target, { method: 'POST', headers: listHeaders, body: JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' }) });
-      const list = await fetch(target, { method: 'POST', headers: listHeaders, body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' }) });
-      const tools = rpcResult(await list.text())?.result?.tools || [];
-      if (!tools.length) fail('tools/list returned no tools.');
-      for (const t of tools) {
-        const notes = [];
-        if (!t.description || t.description.length < 40) notes.push('description too short to tell the model when to use it');
-        if (!t.annotations || t.annotations.readOnlyHint === undefined) notes.push('no readOnlyHint annotation');
-        if (notes.length) warn(`${t.name}: ${notes.join('; ')}`);
-        else ok(`${t.name}${t.annotations.readOnlyHint ? ' (read only)' : ' (changes data)'}`);
-      }
-    }
-  } catch (e) {
-    fail(`could not open a session: ${e.message}`);
-  }
-} else {
-  console.log('\n4. Skipped the tool check: pass --token with an access token from a signed-in session to list the tools.');
-}
+console.log('\n4. To sign in and try the tools, run: npx @modelcontextprotocol/inspector, and point it at this address.');
 
 console.log(`\n${failures ? `${failures} problem(s)` : 'No problems'}${warnings ? `, ${warnings} warning(s)` : ''}.`);
 process.exit(failures ? 1 : 0);
