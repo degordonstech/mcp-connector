@@ -1,0 +1,13 @@
+{
+  "name": "mcp-connector",
+  "version": "0.1.0",
+  "description": "Turn your Next.js and Supabase app into a connector Claude and ChatGPT can sign in to, so users can ask about their own data. Read only first, every query as the user.",
+  "author": {
+    "name": "Godwin Danjuma",
+    "url": "https://degordons.xyz"
+  },
+  "homepage": "https://github.com/degordonstech/mcp-connector",
+  "repository": "https://github.com/degordonstech/mcp-connector",
+  "license": "MIT",
+  "keywords": ["mcp", "mcp-server", "connector", "oauth", "supabase", "nextjs", "claude", "chatgpt", "streamable-http", "remote-mcp"]
+}

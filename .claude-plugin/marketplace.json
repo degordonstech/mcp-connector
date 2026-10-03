@@ -1,0 +1,16 @@
+{
+  "name": "mcp-connector",
+  "owner": {
+    "name": "Godwin Danjuma",
+    "email": "hello@degordons.xyz",
+    "url": "https://github.com/degordonstech"
+  },
+  "description": "A Claude Code plugin by Degordons for turning your app into a connector for Claude and ChatGPT.",
+  "plugins": [
+    {
+      "name": "mcp-connector",
+      "source": "./",
+      "description": "Plans, builds and tests a remote MCP connector on Next.js and Supabase, with OAuth sign-in, a consent screen and every query run as the user."
+    }
+  ]
+}
